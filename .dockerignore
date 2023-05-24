@@ -5,6 +5,7 @@
 !api
 !pkg
 !controllers
-!module-chart
+!keda.yaml
 !go.sum
 !go.mod
+

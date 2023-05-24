@@ -19,13 +19,19 @@ testbin/*
 
 # editor and IDE paraphernalia
 .idea
+.fleet
 *.swp
 *.swo
 *~
 
+__debug_bin
 mod
 bin
 charts
 default.yaml
 template.yaml
 template-k3d.yaml
+keda-manager.yaml
+.DS_Store
+
+manifests/keda/rendered.yaml

@@ -48,14 +48,27 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - apiextensions.k8s.io
   resources:
   - customresourcedefinitions
   verbs:
   - create
   - delete
+  - list
   - patch
   - update
+  - watch
 - apiGroups:
   - apiregistration.k8s.io
   resources:
@@ -63,8 +76,10 @@ rules:
   verbs:
   - create
   - delete
+  - list
   - patch
   - update
+  - watch
 - apiGroups:
   - apps
   resources:
@@ -84,6 +99,18 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
 - apiGroups:
   - autoscaling
   resources:
@@ -156,8 +183,11 @@ rules:
   - clusterrolebindings
   - clusterroles
   - rolebindings
+  - roles
   verbs:
   - create
   - delete
+  - list
   - patch
   - update
+  - watch

@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.19.1 as builder
+FROM golang:1.20.4 as builder
 
 WORKDIR /workspace
 
@@ -22,7 +22,7 @@ FROM gcr.io/distroless/static:nonroot
 
 WORKDIR /
 COPY --chown=65532:65532 --from=builder /workspace/manager .
-COPY --chown=65532:65532 --from=builder /workspace/module-chart ./module-chart
+COPY --chown=65532:65532 --from=builder /workspace/keda.yaml .
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

@@ -1,8 +1,23 @@
 apiVersion: operator.kyma-project.io/v1alpha1
 kind: Keda
 metadata:
-  name: keda-sample
+  name: default
 spec:
   logging:
     operator:
-      level: "debug"
+      level: "info"
+  resources:
+    operator:
+      limits:
+        cpu: "800m"
+        memory: "200Mi"
+      requests:
+        cpu: "300m"
+        memory: "150Mi"
+    metricServer:
+      limits:
+        cpu: "800m"
+        memory: "500Mi"
+      requests:
+        cpu: "300m"
+        memory: "500Mi"
