@@ -14,6 +14,7 @@ IS_LATEST_RELEASE=$2
 REPOSITORY=${REPOSITORY:-kyma-project/keda-manager}
 GITHUB_URL=https://api.github.com/repos/${REPOSITORY}
 GITHUB_AUTH_HEADER="Authorization: Bearer ${GITHUB_TOKEN}"
+echo $IS_LATEST_RELEASE
 
 CURL_RESPONSE=$(curl -L \
   -X POST \
