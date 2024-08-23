@@ -10,6 +10,10 @@ set -o pipefail # prevents errors in a pipeline from being masked
 #   PULL_BASE_REF - name of the tag
 #   GITHUB_TOKEN - github token used to upload the template yaml
 
+PULL_BASE_REF=${PULL_BASE_REF?"Define PULL_BASE_REF env"} # name of the tag
+GITHUB_TOKEN=${GITHUB_TOKEN?"Define GITHUB_TOKEN env"} # github token used to upload the template yaml
+
+
 uploadFile() {
   filePath=${1}
   ghAsset=${2}
@@ -41,7 +45,7 @@ echo "Fetching releases"
 CURL_RESPONSE=$(curl -w "%{http_code}" -sL \
                 -H "Accept: application/vnd.github+json" \
                 -H "Authorization: Bearer $GITHUB_TOKEN" \
-                https://api.github.com/repos/kyma-project/keda-manager/releases)
+                https://api.github.com/repos/MichalKalke/keda-manager/releases)
 JSON_RESPONSE=$(sed '$ d' <<< "${CURL_RESPONSE}")
 HTTP_CODE=$(tail -n1 <<< "${CURL_RESPONSE}")
 if [[ "${HTTP_CODE}" != "200" ]]; then
@@ -60,7 +64,7 @@ then
 fi
 
 echo "Updating github release with assets"
-UPLOAD_URL="https://uploads.github.com/repos/kyma-project/keda-manager/releases/${RELEASE_ID}/assets"
+UPLOAD_URL="https://uploads.github.com/repos/MichalKalke/keda-manager/releases/${RELEASE_ID}/assets"
 
 uploadFile "keda-manager.yaml" "${UPLOAD_URL}?name=keda-manager.yaml"
 uploadFile "config/samples/keda-default-cr.yaml" "${UPLOAD_URL}?name=keda-default-cr.yaml"
