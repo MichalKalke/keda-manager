@@ -5,8 +5,8 @@ on:
     branches: [ "main", "release-*" ]
 
 jobs:
-  builds:
-    uses: ./.github/workflows/_build.yaml
+#  builds:
+#    uses: ./.github/workflows/_build.yaml
 
   upgrades:
     needs: builds
