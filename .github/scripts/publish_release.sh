@@ -11,7 +11,7 @@ set -o pipefail # prevents errors in a pipeline from being masked
 RELEASE_ID=$1
 IS_LATEST_RELEASE=$2
 
-REPOSITORY=${REPOSITORY:-kyma-project/keda-manager}
+REPOSITORY=${REPOSITORY:-MichalKalke/keda-manager}
 GITHUB_URL=https://api.github.com/repos/${REPOSITORY}
 GITHUB_AUTH_HEADER="Authorization: Bearer ${GITHUB_TOKEN}"
 echo $IS_LATEST_RELEASE
