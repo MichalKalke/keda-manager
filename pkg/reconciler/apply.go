@@ -5,7 +5,8 @@ import (
 	"errors"
 
 	"github.com/kyma-project/keda-manager/api/v1alpha1"
-	"k8s.io/utils/pointer"
+	"github.com/kyma-project/keda-manager/pkg/annotation"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -23,8 +24,9 @@ func sFnApply(ctx context.Context, r *fsm, s *systemState) (stateFn, *ctrl.Resul
 			With("ns", obj.GetNamespace()).
 			Debug("applying")
 
+		obj = annotation.AddDoNotEditDisclaimer(obj)
 		err := r.Patch(ctx, &obj, client.Apply, &client.PatchOptions{
-			Force:        pointer.Bool(true),
+			Force:        ptr.To[bool](true),
 			FieldManager: "keda-manager",
 		})
 

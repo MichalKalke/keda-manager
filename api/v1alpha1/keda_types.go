@@ -34,8 +34,12 @@ type ConditionType string
 const (
 	StateReady      = "Ready"
 	StateError      = "Error"
+	StateWarning    = "Warning"
 	StateProcessing = "Processing"
 	StateDeleting   = "Deleting"
+
+	ServedTrue  = "True"
+	ServedFalse = "False"
 
 	ConditionReasonDeploymentUpdateErr = ConditionReason("KedaDeploymentUpdateErr")
 	ConditionReasonVerificationErr     = ConditionReason("VerificationErr")
@@ -43,11 +47,17 @@ const (
 	ConditionReasonApplyObjError       = ConditionReason("ApplyObjError")
 	ConditionReasonVerification        = ConditionReason("Verification")
 	ConditionReasonInitialized         = ConditionReason("Initialized")
+	ConditionReasonKedaDuplicated      = ConditionReason("KedaDuplicated")
+	ConditionReasonDeletion            = ConditionReason("Deletion")
+	ConditionReasonDeletionErr         = ConditionReason("DeletionErr")
+	ConditionReasonDeleted             = ConditionReason("Deleted")
 
 	ConditionTypeInstalled = ConditionType("Installed")
-	OperatorLogLevelDebug  = OperatorLogLevel("debug")
-	OperatorLogLevelInfo   = OperatorLogLevel("info")
-	OperatorLogLevelError  = OperatorLogLevel("error")
+	ConditionTypeDeleted   = ConditionType("Deleted")
+
+	OperatorLogLevelDebug = OperatorLogLevel("debug")
+	OperatorLogLevelInfo  = OperatorLogLevel("info")
+	OperatorLogLevelError = OperatorLogLevel("error")
 
 	LogFormatJSON    = LogFormat("json")
 	LogFormatConsole = LogFormat("console")
@@ -302,6 +312,18 @@ func (k *Keda) UpdateStateFromErr(c ConditionType, r ConditionReason, err error)
 	meta.SetStatusCondition(&k.Status.Conditions, condition)
 }
 
+func (k *Keda) UpdateStateFromWarning(c ConditionType, r ConditionReason, err error) {
+	k.Status.State = StateWarning
+	condition := metav1.Condition{
+		Type:               string(c),
+		Status:             "False",
+		LastTransitionTime: metav1.Now(),
+		Reason:             string(r),
+		Message:            err.Error(),
+	}
+	meta.SetStatusCondition(&k.Status.Conditions, condition)
+}
+
 func (k *Keda) UpdateStateReady(c ConditionType, r ConditionReason, msg string) {
 	k.Status.State = StateReady
 	condition := metav1.Condition{
@@ -326,12 +348,41 @@ func (k *Keda) UpdateStateProcessing(c ConditionType, r ConditionReason, msg str
 	meta.SetStatusCondition(&k.Status.Conditions, condition)
 }
 
-func (k *Keda) UpdateStateDeletion() {
+func (k *Keda) UpdateStateDeletion(c ConditionType, r ConditionReason, msg string) {
 	k.Status.State = StateDeleting
+	condition := metav1.Condition{
+		Type:               string(c),
+		Status:             "Unknown",
+		LastTransitionTime: metav1.Now(),
+		Reason:             string(r),
+		Message:            msg,
+	}
+	meta.SetStatusCondition(&k.Status.Conditions, condition)
+}
+
+func (k *Keda) UpdateStateDeletionTrue(c ConditionType, r ConditionReason, msg string) {
+	k.Status.State = StateDeleting
+	condition := metav1.Condition{
+		Type:               string(c),
+		Status:             "True",
+		LastTransitionTime: metav1.Now(),
+		Reason:             string(r),
+		Message:            msg,
+	}
+	meta.SetStatusCondition(&k.Status.Conditions, condition)
+}
+
+func (k *Keda) UpdateServed(served string) {
+	k.Status.Served = served
+}
+
+func (k *Keda) IsServedEmpty() bool {
+	return k.Status.Served == ""
 }
 
 type Status struct {
 	State      string             `json:"state"`
+	Served     string             `json:"served"`
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 

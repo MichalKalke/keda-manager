@@ -1,0 +1,23 @@
+name: integration tests
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: 'The image to test'
+        required: true
+        type: string
+
+jobs:
+  integration-test:
+    if: ${{ !startsWith(github.event_name, 'pull_request') || github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/rebase
+      - uses: ./.github/actions/setup-go
+      - uses: ./.github/actions/create-k3d-cluster
+      - name: run test
+        run: make -C hack/ci integration-test-on-cluster
+        env:
+          IMG: ${{ inputs.image }}

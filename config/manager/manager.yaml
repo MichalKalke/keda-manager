@@ -8,6 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
+      app.kubernetes.io/component: keda-manager.kyma-project.io
       control-plane: manager
   replicas: 1
   template:
@@ -15,8 +16,10 @@ spec:
       annotations:
         kubectl.kubernetes.io/default-container: manager
       labels:
+        app.kubernetes.io/component: keda-manager.kyma-project.io
         control-plane: manager
     spec:
+      priorityClassName: "priority-class"
       securityContext:
         runAsNonRoot: true
         # TODO(user): For common cases that do not require escalating privileges
@@ -51,7 +54,12 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
-        # TODO(user): Configure the resources accordingly based on the project requirements.
-        # More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 10m
+          limits:
+            memory: 128Mi
+            cpu: 200m
       serviceAccountName: manager
       terminationGracePeriodSeconds: 10

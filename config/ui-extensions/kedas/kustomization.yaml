@@ -1,0 +1,13 @@
+configMapGenerator:
+- name: kedas.operator.kyma-project.io
+  namespace: kube-public
+  files:
+  - general
+  - form
+  - list
+  - details
+  options:
+    disableNameSuffixHash: true
+    labels:
+      busola.io/extension: resource
+      busola.io/extension-version: "0.5"
