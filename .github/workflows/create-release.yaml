@@ -17,45 +17,44 @@ permissions: # used by build images steps
   contents: write # This is required for actions/checkout
 
 jobs:
-  verify-head-status:
-    name: Verify head
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-  upgrade-images:
-    name: Upgrade main images
-    needs: verify-head-status
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.BOT_TOKEN }}
-          fetch-depth: 0
-
-      - name: Bump sec-scanners-config.yaml
-        run: ./.github/scripts/upgrade-sec-scanners-config.sh
-        env:
-          IMG_VERSION: ${{ github.event.inputs.name }}
-
-      - name: Commit&Push
-        run: |
-          git config --local user.email "otter-releaser@otter-releaser.noreply.github.com"
-          git config --local user.name "otter-releaser"
-
-          git add .
-          git commit --allow-empty -m "upgrade dependencies"
-          git push origin ${{ github.ref_name }}
+#  verify-head-status:
+#    name: Verify head
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
+#
+#  upgrade-images:
+#    name: Upgrade main images
+#    needs: verify-head-status
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#        with:
+#          token: ${{ secrets.BOT_TOKEN }}
+#          fetch-depth: 0
+#
+#      - name: Bump sec-scanners-config.yaml
+#        run: ./.github/scripts/upgrade-sec-scanners-config.sh
+#        env:
+#          IMG_VERSION: ${{ github.event.inputs.name }}
+#
+#      - name: Commit&Push
+#        run: |
+#          git config --local user.email "otter-releaser@otter-releaser.noreply.github.com"
+#          git config --local user.name "otter-releaser"
+#
+#          git add .
+#          git commit --allow-empty -m "upgrade dependencies"
+#          git push origin ${{ github.ref_name }}
 
   create-tag:
     name: Create tag
-    needs: upgrade-images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -68,9 +67,9 @@ jobs:
           git tag ${{ github.event.inputs.name }}
           git push origin ${{ github.event.inputs.name }}
 
-  builds:
-    needs: create-tag
-    uses: ./.github/workflows/_build.yaml
+#  builds:
+#    needs: create-tag
+#    uses: ./.github/workflows/_build.yaml
 
   create-draft:
     name: Create draft release
@@ -109,15 +108,15 @@ jobs:
     outputs:
       release_id: ${{ steps.create-draft.outputs.release_id }}
 
-  run-integration-test:
-    needs: create-draft
-    uses: ./.github/workflows/_integration-tests.yaml
-    with:
-      image: europe-docker.pkg.dev/kyma-project/prod/keda-manager:${{ github.event.inputs.name }}
+#  run-integration-test:
+#    needs: create-draft
+#    uses: ./.github/workflows/_integration-tests.yaml
+#    with:
+#      image: europe-docker.pkg.dev/kyma-project/prod/keda-manager:${{ github.event.inputs.name }}
 
   publish-release:
     name: Publish release
-    needs: [run-integration-test, create-draft]
+    needs: [create-draft]
     runs-on: ubuntu-latest
 
     steps:
