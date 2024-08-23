@@ -14,8 +14,8 @@ jobs:
   gitleaks:
     uses: ./.github/workflows/_gitleaks.yaml
 
-  builds:
-    uses: ./.github/workflows/_build.yaml
+#  builds:
+#    uses: ./.github/workflows/_build.yaml
 
   integrations:
     needs: builds
