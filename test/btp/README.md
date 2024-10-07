@@ -2,7 +2,6 @@
 
 ## Overview
 
-This integration test verifies if the Docker Registry works in a semi-production environment.
 
 ## How to use
 
