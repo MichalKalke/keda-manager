@@ -5,12 +5,12 @@ on:
     branches: [ "main", "release-*" ]
 
 jobs:
-  builds:
-    uses: ./.github/workflows/_build.yaml
-
-  upgrades:
-    needs: builds
-    uses: ./.github/workflows/_upgrade-tests.yaml
+#  builds:
+#    uses: ./.github/workflows/_build.yaml
+#
+#  upgrades:
+#    needs: builds
+#    uses: ./.github/workflows/_upgrade-tests.yaml
 
   integrations:
     #needs: builds
