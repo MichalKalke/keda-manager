@@ -64,5 +64,4 @@ variable "BTP_KYMA_REGION" {
 variable "BTP_PROVIDER_SUBACCOUNT_ID" {
   type        = string
   description = "Subaccount ID"
-  default     = null
 }
