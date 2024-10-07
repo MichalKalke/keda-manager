@@ -2,7 +2,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
   name: manager-role
 rules:
 - apiGroups:
@@ -27,6 +26,13 @@ rules:
   - list
   - patch
   - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - limitranges
+  verbs:
+  - list
   - watch
 - apiGroups:
   - ""
@@ -128,6 +134,13 @@ rules:
   - coordination.k8s.io
   resources:
   - leases
+  verbs:
+  - '*'
+- apiGroups:
+  - eventing.keda.sh
+  resources:
+  - cloudeventsources
+  - cloudeventsources/status
   verbs:
   - '*'
 - apiGroups:

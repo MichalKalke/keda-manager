@@ -34,6 +34,7 @@ type ConditionType string
 const (
 	StateReady      = "Ready"
 	StateError      = "Error"
+	StateWarning    = "Warning"
 	StateProcessing = "Processing"
 	StateDeleting   = "Deleting"
 
@@ -195,6 +196,15 @@ func (o *LoggingMetricsSrvCfg) UpdateArg(arg *string) {
 	}
 }
 
+type IstioCfg struct {
+	EnabledSidecarInjection bool `json:"enabledSidecarInjection,omitempty"`
+}
+
+type Istio struct {
+	Operator     *IstioCfg `json:"operator,omitempty"`
+	MetricServer *IstioCfg `json:"metricServer,omitempty"`
+}
+
 type LoggingCfg struct {
 	Operator      *LoggingOperatorCfg   `json:"operator,omitempty"`
 	MetricsServer *LoggingMetricsSrvCfg `json:"metricServer,omitempty"`
@@ -207,6 +217,7 @@ type Resources struct {
 
 // KedaSpec defines the desired state of Keda
 type KedaSpec struct {
+	Istio     *Istio      `json:"istio,omitempty"`
 	Logging   *LoggingCfg `json:"logging,omitempty"`
 	Resources *Resources  `json:"resources,omitempty"`
 	Env       EnvVars     `json:"env,omitempty"`
@@ -286,6 +297,7 @@ func (v *EnvVars) Sanitize() {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:categories={kyma-modules,kyma-keda}
 //+kubebuilder:printcolumn:name="generation",type="integer",JSONPath=".metadata.generation"
 //+kubebuilder:printcolumn:name="age",type="date",JSONPath=".metadata.creationTimestamp"
 //+kubebuilder:printcolumn:name="state",type="string",JSONPath=".status.state"
@@ -301,6 +313,18 @@ type Keda struct {
 
 func (k *Keda) UpdateStateFromErr(c ConditionType, r ConditionReason, err error) {
 	k.Status.State = StateError
+	condition := metav1.Condition{
+		Type:               string(c),
+		Status:             "False",
+		LastTransitionTime: metav1.Now(),
+		Reason:             string(r),
+		Message:            err.Error(),
+	}
+	meta.SetStatusCondition(&k.Status.Conditions, condition)
+}
+
+func (k *Keda) UpdateStateFromWarning(c ConditionType, r ConditionReason, err error) {
+	k.Status.State = StateWarning
 	condition := metav1.Condition{
 		Type:               string(c),
 		Status:             "False",

@@ -30,6 +30,14 @@ func loggingOperatorCfg(k *v1alpha1.Keda) *v1alpha1.LoggingOperatorCfg {
 	return nil
 }
 
+func istioOperatorCfg(k *v1alpha1.Keda) *v1alpha1.IstioCfg {
+	if k != nil && k.Spec.Istio != nil && k.Spec.Istio.Operator != nil {
+		return k.Spec.Istio.Operator
+	}
+
+	return disabledIstioSidecar(k)
+}
+
 // buildSfnUpdateOperatorLogging - builds state function to update operator's logging properties
 func buildSfnUpdateOperatorLogging(u *unstructured.Unstructured) stateFn {
 	next := buildSfnUpdateOperatorLabels(u)
@@ -37,8 +45,13 @@ func buildSfnUpdateOperatorLogging(u *unstructured.Unstructured) stateFn {
 }
 
 func buildSfnUpdateOperatorLabels(u *unstructured.Unstructured) stateFn {
+	next := buildSfnUpdateOperatorPriorityClass(u)
+	return buildSfnUpdateObject(u, updateDeploymentLabels, istioOperatorCfg, next)
+}
+
+func buildSfnUpdateOperatorPriorityClass(u *unstructured.Unstructured) stateFn {
 	next := buildSfnUpdateOperatorResources(u)
-	return buildSfnUpdateObject(u, updateDeploymentSidecarInjection, sidecarInjectionConfig, next)
+	return buildSfnUpdateObject(u, updateDeploymentPriorityClass, priorityClassName, next)
 }
 
 func buildSfnUpdateOperatorResources(u *unstructured.Unstructured) stateFn {
@@ -70,8 +83,13 @@ func buildSfnUpdateMetricsSvrLogging(u *unstructured.Unstructured) stateFn {
 }
 
 func buildSfnUpdateMetricsSvrLabels(u *unstructured.Unstructured) stateFn {
+	next := buildSfnUpdateMetricsSvrPriorityClass(u)
+	return buildSfnUpdateObject(u, updateDeploymentLabels, istioMetricServerCfg, next)
+}
+
+func buildSfnUpdateMetricsSvrPriorityClass(u *unstructured.Unstructured) stateFn {
 	next := buildSfnUpdateMetricsSvrResources(u)
-	return buildSfnUpdateObject(u, updateDeploymentSidecarInjection, sidecarInjectionConfig, next)
+	return buildSfnUpdateObject(u, updateDeploymentPriorityClass, priorityClassName, next)
 }
 
 func buildSfnUpdateMetricsSvrResources(u *unstructured.Unstructured) stateFn {
@@ -98,7 +116,11 @@ func sFnUpdateAdmissionWebhooksDeployment(_ context.Context, r *fsm, s *systemSt
 }
 
 func buildSfnUpdateAdmissionWebhooksLabels(u *unstructured.Unstructured) stateFn {
-	return buildSfnUpdateObject(u, updateDeploymentSidecarInjection, sidecarInjectionConfig, sFnApply)
+	next := buildSfnUpdateAdmissionWebhooksPriorityClass(u)
+	return buildSfnUpdateObject(u, updateDeploymentLabels, disabledIstioSidecar, next)
+}
+func buildSfnUpdateAdmissionWebhooksPriorityClass(u *unstructured.Unstructured) stateFn {
+	return buildSfnUpdateObject(u, updateDeploymentPriorityClass, priorityClassName, sFnApply)
 }
 
 func buildSfnUpdateObject[T any, R any](u *unstructured.Unstructured, update func(T, R) error, getData func(*v1alpha1.Keda) *R, next stateFn) stateFn {
@@ -126,6 +148,15 @@ func loggingMetricsSrvCfg(k *v1alpha1.Keda) *v1alpha1.LoggingMetricsSrvCfg {
 	return nil
 }
 
+func istioMetricServerCfg(k *v1alpha1.Keda) *v1alpha1.IstioCfg {
+	if k != nil && k.Spec.Istio != nil && k.Spec.Istio.MetricServer != nil {
+		return k.Spec.Istio.MetricServer
+	}
+
+	return disabledIstioSidecar(k)
+
+}
+
 func operatorResources(k *v1alpha1.Keda) *corev1.ResourceRequirements {
 	if k != nil && k.Spec.Resources != nil {
 		return k.Spec.Resources.Operator
@@ -147,10 +178,13 @@ func envVars(k *v1alpha1.Keda) *v1alpha1.EnvVars {
 	return nil
 }
 
-type sidecarConfig struct {
-	inject bool
+func disabledIstioSidecar(_ *v1alpha1.Keda) *v1alpha1.IstioCfg {
+	return &v1alpha1.IstioCfg{
+		EnabledSidecarInjection: false,
+	}
 }
 
-func sidecarInjectionConfig(_ *v1alpha1.Keda) *sidecarConfig {
-	return &sidecarConfig{false}
+func priorityClassName(_ *v1alpha1.Keda) *string {
+	priorityClassName := "keda-priority-class"
+	return &priorityClassName
 }

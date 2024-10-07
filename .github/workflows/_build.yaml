@@ -1,0 +1,41 @@
+name: build
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Additional tag for built images'
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  compute-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.get_tag.outputs.TAGS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - if: ${{ !startsWith(github.event_name, 'pull_request') }}
+        name: Get the latest tag
+        id: get_tag
+        run: |
+          {
+            echo 'TAGS<<EOF'
+            echo "${{ github.sha }}"
+            echo "${{ github.ref_name}}"
+            echo "${{ inputs.tag }}"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+  build-keda-manager:
+    needs: compute-tags
+    uses: kyma-project/test-infra/.github/workflows/image-builder.yml@main # Usage: kyma-project/test-infra/.github/workflows/image-builder.yml@main
+    with:
+      name: keda-manager
+      dockerfile: Dockerfile
+      tags: ${{ needs.compute-tags.outputs.tags }}

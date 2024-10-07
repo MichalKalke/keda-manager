@@ -84,8 +84,16 @@ func updateDeploymentContainer0Args(deployment appsv1.Deployment, updater api.Ar
 	return nil
 }
 
-func updateDeploymentSidecarInjection(deployment *appsv1.Deployment, config sidecarConfig) error {
-	deployment.Spec.Template.ObjectMeta.Labels["sidecar.istio.io/inject"] = strconv.FormatBool(config.inject)
+func updateDeploymentLabels(deployment *appsv1.Deployment, config v1alpha1.IstioCfg) error {
+	deployment.Spec.Template.ObjectMeta.Labels["sidecar.istio.io/inject"] = strconv.FormatBool(config.EnabledSidecarInjection)
+	deployment.Spec.Template.ObjectMeta.Labels["kyma-project.io/module"] = "keda-manager"
+	deployment.Spec.Template.ObjectMeta.Labels["app.kubernetes.io/part-of"] = "keda-manager"
+	deployment.Spec.Template.ObjectMeta.Labels["app.kubernetes.io/managed-by"] = ""
+	return nil
+}
+
+func updateDeploymentPriorityClass(deployment *appsv1.Deployment, priorityClassName string) error {
+	deployment.Spec.Template.Spec.PriorityClassName = priorityClassName
 	return nil
 }
 
