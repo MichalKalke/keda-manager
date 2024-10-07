@@ -14,7 +14,7 @@ runs:
       shell: bash
       run: |
         sudo ln -sf bash /bin/sh
-        eval BTP_FILE=$(./tests/btp/hack/get_btp_file_name.sh "$(uname -s)" "$(uname -m)")
+        eval BTP_FILE=$(./test/btp/hack/get_btp_file_name.sh "$(uname -s)" "$(uname -m)")
         ## Detect if operating system
         [[ -z "$BTP_FILE" ]] && { echo "$(uname -s) $(uname -m)" ; exit 1; }
         mkdir -p ${{ inputs.path }}
