@@ -33,19 +33,19 @@ module "kyma" {
   BTP_BOT_PASSWORD = var.BTP_BOT_PASSWORD
 }
 
-data "btp_subaccount_service_binding" "provider_sm" {
-  count = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
-  subaccount_id = var.BTP_PROVIDER_SUBACCOUNT_ID
-  name          = "provider-sm-binding"
-}
+#data "btp_subaccount_service_binding" "provider_sm" {
+ # count = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
+  #subaccount_id = var.BTP_PROVIDER_SUBACCOUNT_ID
+  #name          = "provider-sm-binding"
+#}
 
-locals {
-  providerServiceManagerCredentials = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? null : jsondecode(one(data.btp_subaccount_service_binding.provider_sm).credentials)
-}
+#locals {
+#  providerServiceManagerCredentials = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? null : jsondecode(one(data.btp_subaccount_service_binding.provider_sm).credentials)
+#}
 
 
 resource "local_file" "provider_sm" {
-  count = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
+  #ount = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
   content  = <<EOT
 clientid=${local.providerServiceManagerCredentials.clientid}
 clientsecret=${local.providerServiceManagerCredentials.clientsecret}
