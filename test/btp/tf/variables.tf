@@ -60,8 +60,3 @@ variable "BTP_KYMA_REGION" {
   description = "Kyma region"
   default     = "westeurope"
 }
-
-variable "BTP_PROVIDER_SUBACCOUNT_ID" {
-  type        = string
-  description = "Subaccount ID"
-}
