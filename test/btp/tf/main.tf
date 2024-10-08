@@ -34,18 +34,18 @@ module "kyma" {
 }
 
 data "btp_subaccount_service_binding" "provider_sm" {
-  count = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
-  subaccount_id = var.BTP_PROVIDER_SUBACCOUNT_ID
+  count = module.kyma.subaccount_id == null ? 0 : 1
+  subaccount_id = module.kyma.subaccount_id
   name          = "provider-sm-binding"
 }
 
 locals {
-  providerServiceManagerCredentials = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? null : jsondecode(one(data.btp_subaccount_service_binding.provider_sm).credentials)
+  providerServiceManagerCredentials = module.kyma.subaccount_id == null ? null : jsondecode(one(data.btp_subaccount_service_binding.provider_sm).credentials)
 }
 
 
 resource "local_file" "provider_sm" {
-  count = var.BTP_PROVIDER_SUBACCOUNT_ID == null ? 0 : 1
+  count = module.kyma.subaccount_id == null ? 0 : 1
   content  = <<EOT
 clientid=${local.providerServiceManagerCredentials.clientid}
 clientsecret=${local.providerServiceManagerCredentials.clientsecret}
