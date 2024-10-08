@@ -26,7 +26,7 @@ provider "btp" {
 }
 
 module "kyma" {
-  source = "git::https://github.com/kyma-project/terraform-module.git?ref=v0.2.0"
+  source = "git::https://github.com/kyma-project/terraform-module.git"
   BTP_NEW_SUBACCOUNT_NAME = var.BTP_NEW_SUBACCOUNT_NAME
   BTP_CUSTOM_IAS_TENANT = var.BTP_CUSTOM_IAS_TENANT
   BTP_BOT_USER = var.BTP_BOT_USER
