@@ -4,7 +4,6 @@ service-account-kubeconfig:
 	../bin/kyma alpha access --clusterrole ${CLUSTERROLE} --kubeconfig ../tf/kubeconfig.yaml --name ci-workflow-sa --time 1h --output tmp/sa-kubeconfig.yaml
 	@echo "Service-account based kubeconfig generated"
 
-
 .PHONY cleanup-tf-force:
 cleanup-tf-force:
 	rm -rf ../tf/*.txt

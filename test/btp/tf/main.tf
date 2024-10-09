@@ -26,37 +26,26 @@ provider "btp" {
 }
 
 module "kyma" {
-  source = "git::https://github.com/kyma-project/terraform-module.git"
+  source = "git::https://github.com/kyma-project/terraform-module.git?ref=v0.2.0"
   BTP_NEW_SUBACCOUNT_NAME = var.BTP_NEW_SUBACCOUNT_NAME
   BTP_CUSTOM_IAS_TENANT = var.BTP_CUSTOM_IAS_TENANT
   BTP_BOT_USER = var.BTP_BOT_USER
   BTP_BOT_PASSWORD = var.BTP_BOT_PASSWORD
+  BTP_NEW_SUBACCOUNT_REGION = var.BTP_NEW_SUBACCOUNT_REGION
 }
-
-data "btp_subaccount_service_binding" "provider_sm" {
-  count = module.kyma.subaccount_id == null ? 0 : 1
-  subaccount_id = module.kyma.subaccount_id
-  name          = "provider-sm-binding"
-}
-
-locals {
-  providerServiceManagerCredentials = module.kyma.subaccount_id == null ? null : jsondecode(one(data.btp_subaccount_service_binding.provider_sm).credentials)
-}
-
-
-resource "local_file" "provider_sm" {
-  count = module.kyma.subaccount_id == null ? 0 : 1
-  content  = <<EOT
-clientid=${local.providerServiceManagerCredentials.clientid}
-clientsecret=${local.providerServiceManagerCredentials.clientsecret}
-sm_url=${local.providerServiceManagerCredentials.sm_url}
-tokenurl=${local.providerServiceManagerCredentials.url}
-tokenurlsuffix=/oauth/token
-EOT
-  filename = "provider-sm-decoded.env"
-}
-
 
 output "subaccount_id" {
   value = module.kyma.subaccount_id
+}
+
+output "service_instance_id" {
+  value = module.kyma.service_instance_id
+}
+
+output "cluster_id" {
+  value = module.kyma.cluster_id
+}
+
+output "domain" {
+  value = module.kyma.domain
 }
