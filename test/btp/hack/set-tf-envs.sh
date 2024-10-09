@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "$BTP_ENV" > /tmp/.env
-export $(cat /tmp/.env | xargs -L 1)
+cat /tmp/.env | wc -l
+export $(</tmp/.env)
 rm /tmp/.env
 
