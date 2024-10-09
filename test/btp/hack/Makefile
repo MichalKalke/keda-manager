@@ -15,4 +15,3 @@ cleanup-tf-force:
 	rm -rf ../tf/terraform.tfstate
 	rm -rf ../tf/terraform.tfstate*
 	rm -rf ../tf/.terraform.locl.hcl
-	#TODO: should we also add here local.tfvars which could contain sensitive data?
