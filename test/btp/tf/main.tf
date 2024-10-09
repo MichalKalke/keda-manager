@@ -14,7 +14,6 @@ terraform {
   }
 }
 
-
 provider "jq" {}
 provider "http" {}
 

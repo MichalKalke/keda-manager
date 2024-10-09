@@ -2,7 +2,9 @@
 
 ## Overview
 
+
 This integration test verifies if Keda Manager works in a semi-production environment.
+
 
 ## How to use
 
