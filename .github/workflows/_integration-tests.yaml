@@ -38,6 +38,7 @@ jobs:
       - name: Create btp account with kyma enable
         run: |
           . ./set-tf-envs.sh
+          echo "${TF_VAR_BTP_GLOBAL_ACCOUNT}"
           terraform -chdir=../tf init
           terraform -chdir=../tf apply -auto-approve
           echo "SUBACC_ID=$(terraform -chdir=../tf output -raw subaccount_id)" >> $GITHUB_ENV
