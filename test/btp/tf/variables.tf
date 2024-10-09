@@ -44,12 +44,6 @@ variable "BTP_KYMA_PLAN" {
   default     = "azure"
 }
 
-variable "BTP_NEW_SUBACCOUNT_REGION" {
-  type        = string
-  description = "Region name"
-  default     = "eu20"
-}
-
 variable "BTP_CUSTOM_IAS_TENANT" {
   type        = string
   description = "Custom IAS tenant"
