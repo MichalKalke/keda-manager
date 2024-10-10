@@ -20,9 +20,7 @@ jobs:
       - uses: ./.github/actions/setup-go
       - uses: ./.github/actions/create-k3d-cluster
       - name: run test
-        run: |
-          export KUBECONFIG=/tmp/sa-kubeconfig.yaml
-          make -C hack/ci integration-test-on-cluster
+        run: make -C hack/ci integration-test-on-cluster
         env:
           IMG: ${{ inputs.image }}
 
@@ -57,7 +55,9 @@ jobs:
           BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
 
       - name: Run Keda Manager's integration test
-        run: make -C ../../../hack/ci integration-test-on-cluster
+        run: |
+          export KUBECONFIG=/tmp/sa-kubeconfig.yaml
+          make -C ../../../hack/ci integration-test-on-cluster
 
       - uses: ./.github/actions/setup-btp
         if: always()
