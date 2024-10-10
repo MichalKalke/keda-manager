@@ -56,8 +56,7 @@ jobs:
 
       - name: Run Keda Manager's integration test
         run: |
-          export KUBECONFIG="/tmp/sa-kubeconfig.yaml"
-          make -C ../../../hack/ci integration-test-on-cluster
+          KUBECONFIG=/tmp/sa-kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
 
       - uses: ./.github/actions/setup-btp
         if: always()
