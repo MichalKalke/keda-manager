@@ -63,7 +63,7 @@ jobs:
       - uses: ./.github/actions/setup-btp
         if: always()
         with:
-          path: "tests/btp/bin"
+          path: "test/btp/bin"
 
       - name: Force delete btp account
         if: always()
