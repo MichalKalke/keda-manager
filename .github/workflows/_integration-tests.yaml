@@ -56,6 +56,8 @@ jobs:
 
       - name: Run Keda Manager's integration test
         run: |
+          #TODO please delete me :)
+          ls /tmp
           KUBECONFIG=/tmp/sa-kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
 
       - uses: ./.github/actions/setup-btp
