@@ -1,5 +1,4 @@
 name: integration tests
-
 on:
   workflow_call:
     inputs:
@@ -7,7 +6,6 @@ on:
         description: 'The image to test'
         required: true
         type: string
-
 jobs:
   integration-test:
     if: ${{ !startsWith(github.event_name, 'pull_request') || github.event.pull_request.draft == false }}
@@ -34,8 +32,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-kyma
         with:
-          path: "test/btp/bin"
-      - name: Create btp account with kyma enable
+          path: "tests/btp/bin"
+      - name: Create btp account with kyma enabled
         run: |
           . ./set-tf-envs.sh
           terraform -chdir=../tf init
@@ -56,10 +54,7 @@ jobs:
 
       - name: Run Keda Manager's integration test
         run: |
-          #TODO please delete me :)
-          ls /tmp
           KUBECONFIG=/tmp/sa-kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
-
       - uses: ./.github/actions/setup-btp
         if: always()
         with:
@@ -73,4 +68,4 @@ jobs:
           ../bin/btp delete accounts/subaccount ${SUBACC_ID} --global-account ${TF_VAR_BTP_GLOBAL_ACCOUNT} --force-delete true --confirm true
         env:
           BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
-          TF_VAR_BTP_NEW_SUBACCOUNT_NAME: keda-registry-test-${{ github.sha }}-${{ github.run_attempt }}
+  
