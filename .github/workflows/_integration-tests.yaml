@@ -1,5 +1,4 @@
 name: integration tests
-
 on:
   workflow_call:
     inputs:
@@ -7,7 +6,6 @@ on:
         description: 'The image to test'
         required: true
         type: string
-
 jobs:
   integration-test:
     if: ${{ !startsWith(github.event_name, 'pull_request') || github.event.pull_request.draft == false }}
