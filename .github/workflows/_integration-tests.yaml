@@ -44,26 +44,26 @@ jobs:
           BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
           TF_VAR_BTP_NEW_SUBACCOUNT_NAME: keda-manager-test-${{ github.sha }}-${{ github.run_attempt }}
 
-      - name: Generate access
-        run: |
-          sudo ln -sf bash /bin/sh
-          . ./set-tf-envs.sh
-          mkdir -p tmp
-          CLUSTERROLE=cluster-admin make service-account-kubeconfig
-        env:
-          BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
+      # - name: Generate access
+      #   run: |
+      #     sudo ln -sf bash /bin/sh
+      #     . ./set-tf-envs.sh
+      #     mkdir -p tmp
+      #     CLUSTERROLE=cluster-admin make service-account-kubeconfig
+      #   env:
+      #     BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
 
       - name: Run Keda Manager's integration test
         run: |
-          KUBECONFIG=/tmp/sa-kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
+          KUBECONFIG=../tf/kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
 
       - uses: ./.github/actions/setup-btp
-        if: always()
+        #if: always()
         with:
           path: "/usr/local/bin"
 
       - name: Force delete btp account
-        if: always()
+        #if: always()
         run: |
           . ./set-tf-envs.sh
           btp login --url $TF_VAR_BTP_BACKEND_URL --user $TF_VAR_BTP_BOT_USER --password $TF_VAR_BTP_BOT_PASSWORD --idp $TF_VAR_BTP_CUSTOM_IAS_TENANT --subdomain $TF_VAR_BTP_GLOBAL_ACCOUNT
