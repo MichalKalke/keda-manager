@@ -81,19 +81,22 @@ func runScenario(testutil *utils.TestUtils) error {
 	if err := utils.WithRetry(testutil, hpa.Verify); err != nil {
 		return err
 	}
-
+	testutil.Logger.Infof("Chleb1")
+	
 	// delete scaledobject
 	testutil.Logger.Infof("Deleting scaledobjects '%s'", testutil.ScaledObjectName)
 	if err := scaledobject.Delete(testutil); err != nil {
 		return err
 	}
-
+	testutil.Logger.Infof("Chleb2")
+	
 	// verify deletion without orphan resources
 	testutil.Logger.Infof("Verifying scaledobjects '%s' hpa deletion", testutil.ScaledObjectName)
 	if err := utils.WithRetry(testutil, hpa.VerifyDeletion); err != nil {
 		return err
 	}
-
+	testutil.Logger.Infof("Chleb3")
+	
 	// verify deletion without orphan resources
 	testutil.Logger.Infof("Verifying scaledobject '%s' deletion", testutil.ScaledObjectName)
 	if err := utils.WithRetry(testutil, scaledobject.VerifyDeletion); err != nil {
