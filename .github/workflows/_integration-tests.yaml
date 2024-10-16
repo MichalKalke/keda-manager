@@ -44,18 +44,18 @@ jobs:
           BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
           TF_VAR_BTP_NEW_SUBACCOUNT_NAME: keda-manager-test-${{ github.sha }}-${{ github.run_attempt }}
 
-      # - name: Generate access
-      #   run: |
-      #     sudo ln -sf bash /bin/sh
-      #     . ./set-tf-envs.sh
-      #     mkdir -p tmp
-      #     CLUSTERROLE=cluster-admin make service-account-kubeconfig
-      #   env:
-      #     BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
+      - name: Generate access
+        run: |
+          sudo ln -sf bash /bin/sh
+          . ./set-tf-envs.sh
+          mkdir -p tmp
+          CLUSTERROLE=cluster-admin make service-account-kubeconfig
+        env:
+          BTP_ENV: ${{ secrets.BTP_INTEGRATION_TEST }}
 
       - name: Run Keda Manager's integration test
         run: |
-          KUBECONFIG=../tf/kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
+          KUBECONFIG=/tmp/sa-kubeconfig.yaml make -C ../../../hack/ci integration-test-on-cluster
 
       - uses: ./.github/actions/setup-btp
         #if: always()
